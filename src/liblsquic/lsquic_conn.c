@@ -335,3 +335,8 @@ lsquic_conn_get_sni (struct lsquic_conn *lconn)
     else
         return NULL;
 }
+
+struct ssl_st *
+lsquic_conn_ssl(struct lsquic_conn *lconn) {
+    return lconn->cn_esf_c->esf_get_ssl(lconn->cn_enc_session);
+}

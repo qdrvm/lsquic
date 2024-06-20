@@ -2703,6 +2703,12 @@ iquic_esf_sess_resume_enabled (enc_session_t *enc_session_p)
     return !!(enc_sess->esi_flags & ESI_USE_SSL_TICKET);
 }
 
+static struct ssl_st *
+iquic_esf_get_ssl(enc_session_t *enc_session_p) {
+    struct enc_sess_iquic *const enc_sess = enc_session_p;
+    return enc_sess->esi_ssl;
+}
+
 
 static void
 iquic_esfi_set_iscid (enc_session_t *enc_session_p,
@@ -2884,6 +2890,7 @@ const struct enc_session_funcs_common lsquic_enc_session_common_ietf_v1 =
     .esf_alg_keysize     = iquic_esf_alg_keysize,
     .esf_is_sess_resume_enabled = iquic_esf_sess_resume_enabled,
     .esf_set_conn        = iquic_esf_set_conn,
+    .esf_get_ssl         = iquic_esf_get_ssl,
 };
 
 
@@ -2903,6 +2910,7 @@ const struct enc_session_funcs_common lsquic_enc_session_common_ietf_v1_no_flush
     .esf_alg_keysize     = iquic_esf_alg_keysize,
     .esf_is_sess_resume_enabled = iquic_esf_sess_resume_enabled,
     .esf_set_conn        = iquic_esf_set_conn,
+    .esf_get_ssl         = iquic_esf_get_ssl,
 };
 
 

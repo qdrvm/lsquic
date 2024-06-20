@@ -1,12 +1,25 @@
 # Copyright (c) 2017 - 2022 LiteSpeed Technologies Inc.  See LICENSE.
 cmake_minimum_required(VERSION 3.0...3.23)
 
+include(cmake/HunterGate.cmake)
+HunterGate(
+    URL  https://github.com/qdrvm/hunter/archive/refs/tags/v0.25.3-qdrvm16.zip
+    SHA1 990ea05207260b3757ce051e354cc163e910a211
+)
 
 PROJECT(lsquic C)
 
+if(HUNTER_ENABLED)
+    hunter_add_package(BoringSSL)
+    find_package(OpenSSL CONFIG REQUIRED)
+    find_package(Threads)
+    hunter_add_package(ZLIB)
+    find_package(ZLIB CONFIG REQUIRED)
+endif()
+
 OPTION(LSQUIC_FIU "Use Fault Injection in Userspace (FIU)" OFF)
-OPTION(LSQUIC_BIN "Compile example binaries that use the library" ON)
-OPTION(LSQUIC_TESTS "Compile library unit tests" ON)
+OPTION(LSQUIC_BIN "Compile example binaries that use the library" OFF)
+OPTION(LSQUIC_TESTS "Compile library unit tests" OFF)
 OPTION(LSQUIC_SHARED_LIB "Compile as shared librarry" OFF)
 OPTION(LSQUIC_DEVEL "Compile in development mode" OFF)
 
@@ -153,6 +166,7 @@ ELSE()
     ENDIF()
 ENDIF()
 
+if(NOT HUNTER_ENABLED)
 IF (NOT DEFINED BORINGSSL_INCLUDE AND DEFINED BORINGSSL_DIR)
     FIND_PATH(BORINGSSL_INCLUDE NAMES openssl/ssl.h
                 PATHS ${BORINGSSL_DIR}/include
@@ -223,6 +237,7 @@ ELSE()
     ENDFOREACH()
 
 ENDIF()
+endif(NOT HUNTER_ENABLED)
 
 SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 INCLUDE_DIRECTORIES(include)
@@ -249,6 +264,7 @@ ENDIF()
 
 # Find zlib and libevent header files and library files
 # TODO: libevent is not strictly necessary to build the library.
+if(NOT HUNTER_ENABLED)
 FIND_PATH(ZLIB_INCLUDE_DIR NAMES zlib.h)
 IF (ZLIB_INCLUDE_DIR)
     INCLUDE_DIRECTORIES(${ZLIB_INCLUDE_DIR})
@@ -268,6 +284,7 @@ IF(ZLIB_LIB)
 ELSE()
     MESSAGE(STATUS "zlib not found")
 ENDIF()
+endif(NOT HUNTER_ENABLED)
 
 SET(LIBS lsquic ${BORINGSSL_LIB_ssl} ${BORINGSSL_LIB_crypto} ${ZLIB_LIB} ${LIBS})
 
@@ -337,12 +354,12 @@ INSTALL(FILES
     include/lsquic.h
     include/lsquic_types.h
     include/lsxpack_header.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/lsquic
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
 if(WIN32)
     install(FILES
         wincompat/vc_compat.h
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/lsquic
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     )
 endif()

@@ -136,6 +136,9 @@ struct enc_session_funcs_common
     void
     (*esf_flush_encryption) (enc_session_t *);
 
+    struct ssl_st *
+    (*esf_get_ssl)(enc_session_t *);
+
     unsigned
     esf_tag_len;
 };

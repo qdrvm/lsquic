@@ -2137,6 +2137,9 @@ int
 lsquic_ssl_sess_to_resume_info (struct ssl_st *, struct ssl_session_st *,
                                         unsigned char **buf, size_t *buf_sz);
 
+struct ssl_st *
+lsquic_conn_ssl(struct lsquic_conn *conn);
+
 #ifdef __cplusplus
 }
 #endif

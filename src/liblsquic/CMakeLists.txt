@@ -1,6 +1,6 @@
 # Copyright (c) 2017 - 2022 LiteSpeed Technologies Inc.  See LICENSE.
 SET(lsquic_STAT_SRCS
-    ls-qpack/lsqpack.c
+    ls-qpack-copy/lsqpack.c
     lsquic_adaptive_cc.c
     lsquic_alarmset.c
     lsquic_arr.c
@@ -91,18 +91,18 @@ IF(NOT MSVC)
     IF (HAS_NO_IMPLICIT_FALLTHROUGH)
         SET(QPACK_FLAGS "${QPACK_FLAGS} -Wno-implicit-fallthrough")
     ENDIF()
-set_source_files_properties(ls-qpack/lsqpack.c PROPERTIES COMPILE_FLAGS ${QPACK_FLAGS})
+set_source_files_properties(ls-qpack-copy/lsqpack.c PROPERTIES COMPILE_FLAGS ${QPACK_FLAGS})
 ENDIF()
 
-include_directories(ls-qpack)
+include_directories(ls-qpack-copy)
 
 IF(PROJECT_NAME STREQUAL "openlitespeed")
     INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/src/spdy)
 ELSE()
-    INCLUDE_DIRECTORIES(../lshpack)
+    INCLUDE_DIRECTORIES(../lshpack-copy)
     SET(lsquic_STAT_SRCS ${lsquic_STAT_SRCS}
         lsquic_xxhash.c
-        ../lshpack/lshpack.c
+        ../lshpack-copy/lshpack.c
     )
 ENDIF()
 
@@ -133,9 +133,12 @@ IF(LSQUIC_SHARED_LIB)
 ELSE()
   add_library(lsquic STATIC ${lsquic_STAT_SRCS})
 ENDIF()
+if(HUNTER_ENABLED)
+    target_link_libraries(lsquic PUBLIC OpenSSL::SSL ZLIB::zlib)
+endif()
 
 target_include_directories(
-    lsquic PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/lsquic>)
+    lsquic PUBLIC $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 install(TARGETS lsquic
     EXPORT lsquic-targets
