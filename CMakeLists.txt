@@ -22,6 +22,7 @@ OPTION(LSQUIC_BIN "Compile example binaries that use the library" OFF)
 OPTION(LSQUIC_TESTS "Compile library unit tests" OFF)
 OPTION(LSQUIC_SHARED_LIB "Compile as shared librarry" OFF)
 OPTION(LSQUIC_DEVEL "Compile in development mode" OFF)
+OPTION(LSQUIC_ADDRESS_SANITIZER "Compile with ASAN instrumentation" OFF)
 
 INCLUDE(GNUInstallDirs)
 
@@ -73,18 +74,17 @@ ENDIF()
 
 IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     SET(MY_CMAKE_FLAGS "${MY_CMAKE_FLAGS} -O0 -g3")
-    IF(CMAKE_C_COMPILER MATCHES "clang" AND
-                        NOT "$ENV{TRAVIS}" MATCHES "^true$" AND
-                        NOT "$ENV{EXTRA_CFLAGS}" MATCHES "-fsanitize")
-        SET(MY_CMAKE_FLAGS "${MY_CMAKE_FLAGS} -fsanitize=address")
-        SET(LIBS ${LIBS} -fsanitize=address)
-    ENDIF()
     # Uncomment to enable cleartext protocol mode (no crypto):
     #SET (MY_CMAKE_FLAGS "${MY_CMAKE_FLAGS} -DLSQUIC_ENABLE_HANDSHAKE_DISABLE=1")
 ELSE()
     SET(MY_CMAKE_FLAGS "${MY_CMAKE_FLAGS} -O3 -g0")
     # Comment out the following line to compile out debug messages:
     #SET(MY_CMAKE_FLAGS "${MY_CMAKE_FLAGS} -DLSQUIC_LOWEST_LOG_LEVEL=LSQ_LOG_INFO")
+ENDIF()
+
+IF(LSQUIC_ADDRESS_SANITIZER)
+    SET(MY_CMAKE_FLAGS "${MY_CMAKE_FLAGS} -fsanitize=address")
+    SET(LIBS ${LIBS} -fsanitize=address)
 ENDIF()
 
 IF (LSQUIC_DEVEL)
