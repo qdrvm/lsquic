@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.0...3.23)
 
 include(cmake/HunterGate.cmake)
 HunterGate(
-    URL  https://github.com/qdrvm/hunter/archive/refs/tags/v0.25.3-qdrvm16.zip
-    SHA1 990ea05207260b3757ce051e354cc163e910a211
+    URL  https://github.com/qdrvm/hunter/archive/refs/tags/v0.25.3-qdrvm36.zip
+    SHA1 c48348d132f5ee4c7a00d5fcc71a569c358557ab
 )
 
 PROJECT(lsquic C)
