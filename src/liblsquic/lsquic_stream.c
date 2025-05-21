@@ -847,7 +847,7 @@ maybe_switch_data_in (struct lsquic_stream *stream)
                                     stream->data_in, stream->read_offset);
         if (!stream->data_in)
         {
-            stream->data_in = lsquic_data_in_error_new();
+            stream->data_in = lsquic_data_in_error_new(stream->conn_pub);
             return -1;
         }
     }
@@ -1160,7 +1160,7 @@ lsquic_stream_frame_in (lsquic_stream_t *stream, stream_frame_t *frame)
                                     stream->data_in, stream->read_offset);
         if (stream->data_in)
             goto insert_frame;
-        stream->data_in = lsquic_data_in_error_new();
+        stream->data_in = lsquic_data_in_error_new(stream->conn_pub);
     }
     else
     {
@@ -1183,7 +1183,7 @@ drop_frames_in (lsquic_stream_t *stream)
          * data-in stream.  It does the right thing after incoming data is
          * dropped.
          */
-        stream->data_in = lsquic_data_in_error_new();
+        stream->data_in = lsquic_data_in_error_new(stream->conn_pub);
         stream->stream_flags &= ~STREAM_CACHED_FRAME;
     }
 }

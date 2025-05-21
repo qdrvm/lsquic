@@ -3,6 +3,8 @@
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 LIST(APPEND LIBS ${EVENT_LIB})
 
+LIST(APPEND LIBS stdc++)
+
 IF(MSVC)
     FIND_LIBRARY(PCRE_LIB pcre)
     IF(PCRE_LIB)
